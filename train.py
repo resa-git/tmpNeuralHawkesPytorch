@@ -69,6 +69,7 @@ if __name__ == "__main__":
     parser.add_argument("--seq_len", type=int, default=-1, help="truncated sequence length for hawkes and self-correcting, -1 means full sequence")
     parser.add_argument("--batch_size", type=int, default=10, help="Batch_size for each train iteration")
     parser.add_argument("--used_past_model", type=bool, help="True to use a trained model named model.pt")
+    parser.add_argument("--in_seq_len", type=int, default= 250, help="Divide the seq into this duration [sec]")
 
     config = parser.parse_args()
 
@@ -110,9 +111,9 @@ if __name__ == "__main__":
         else:
             time_duration, type_train, seq_lens_list = utils.padding_seq_len(time_duration, type_train, type_size, seq_len)
             test_duration, type_test = utils.padding_seq_len(test_duration, type_test, type_size, seq_len)
-    elif dataset == 'AMZN':
+    elif dataset == 'AMZN' or dataset == 'MSFT' or dataset == 'INTC':
         type_size = 2
-        time_duration, type_train, seq_lens_list = stocks.get_stock_data(-1, 1e20, 'AMZN', 250)
+        time_duration, type_train, seq_lens_list = stocks.get_stock_data(-1, 1e20, dataset, config.in_seq_len)
         test_duration = time_duration.copy()
         type_test= type_train.copy()
         seq_lens_test= seq_lens_list.copy()
