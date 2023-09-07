@@ -69,8 +69,8 @@ if __name__ == "__main__":
     parser.add_argument("--seq_len", type=int, default=-1, help="truncated sequence length for hawkes and self-correcting, -1 means full sequence")
     parser.add_argument("--batch_size", type=int, default=10, help="Batch_size for each train iteration")
     parser.add_argument("--used_past_model", type=bool, help="True to use a trained model named model.pt")
-    parser.add_argument("--in_seq_len", type=int, default= 250, help="Divide the seq into this duration [sec]")
-    parser.add_argument("--overlap", type=int, default= 2, help="time window overlap[sec]")
+    parser.add_argument("--in_seq_len", type=int, default= 60, help="Divide the seq into this duration [sec]")
+    parser.add_argument("--overlap", type=int, default= 10, help="time window overlap[sec]")
 
     config = parser.parse_args()
 

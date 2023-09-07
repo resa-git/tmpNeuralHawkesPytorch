@@ -110,8 +110,8 @@ def get_stock_data_overlap(start_, end_, stock, seq_length, overlap=1):
     
 
     total_time = df['time'].iloc[-1]
-    period_length = total_time / seq_length
-    step_size = (1 - overlap) * period_length
+    period_length =  seq_length
+    step_size = overlap
     periods = []
 
     start_time = 0
