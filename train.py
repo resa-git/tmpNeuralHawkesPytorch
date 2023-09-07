@@ -63,7 +63,7 @@ def type_valid(time_durations, seq_lens_lists, type_tests):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Training model..")
 
-    parser.add_argument("--dataset", type=str, default = "data_hawkes", help="e.g. hawkes")
+    parser.add_argument("--dataset", type=str, default = "AMZN", help="e.g. hawkes")
     parser.add_argument("--lr", type=float, default=0.01, help="learning rate")
     parser.add_argument("--epochs", type=int, default=10, help="maximum epochs")
     parser.add_argument("--seq_len", type=int, default=-1, help="truncated sequence length for hawkes and self-correcting, -1 means full sequence")
@@ -113,7 +113,7 @@ if __name__ == "__main__":
             test_duration, type_test = utils.padding_seq_len(test_duration, type_test, type_size, seq_len)
     elif dataset == 'AMZN' or dataset == 'MSFT' or dataset == 'INTC':
         type_size = 2
-        time_duration, type_train, seq_lens_list = stocks.get_stock_data(-1, 1e20, dataset, config.in_seq_len)
+        time_duration, type_train, seq_lens_list = stocks.get_stock_data_overlap(-1, 1e20, dataset, config.in_seq_len, overlap = 5)
         test_duration = time_duration.copy()
         type_test= type_train.copy()
         seq_lens_test= seq_lens_list.copy()

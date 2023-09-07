@@ -7,7 +7,7 @@ import pandas as pd
 #end_ = 1e12
 def get_stock_data(start_, end_, stock, seq_length):
 
-    df = pd.read_csv('data/AMZN.csv')
+    df = pd.read_csv(f'data/{stock}.csv')
     df = df[((df['time'] >= start_) & (df['time'] <= end_))]
     #seq_length = 250
     # Divide the total time into 250 periods
@@ -22,10 +22,8 @@ def get_stock_data(start_, end_, stock, seq_length):
         end_time = start_time + period_length
         period_events = []
         period_df = df[(df['time'] >= start_time) & (df['time'] < end_time)]
-        #last_event_times = {}
         
         global_idx_event = 0
-        period_df.iloc[1, -1] = 1
         for counter, (idx, row) in enumerate(period_df.iterrows()):
             event = {}
             global_idx_event += 1
@@ -104,3 +102,55 @@ def write_csvfile(stock):
     df['state'] = df['state'].astype(int)
     fname = f'{stock}.csv'
     df.to_csv(fname, index = False)
+
+def get_stock_data_overlap(start_, end_, stock, seq_length, overlap=1):
+    
+    df = pd.read_csv(f'data/{stock}.csv')
+    df = df[((df['time'] >= start_) & (df['time'] <= end_))]
+    
+
+    total_time = df['time'].iloc[-1]
+    period_length = total_time / seq_length
+    step_size = (1 - overlap) * period_length
+    periods = []
+
+    start_time = 0
+    while start_time + period_length <= total_time:
+        end_time = start_time + period_length
+        period_events = []
+        period_df = df[(df['time'] >= start_time) & (df['time'] < end_time)]
+        
+        global_idx_event = 0
+        for counter, (idx, row) in enumerate(period_df.iterrows()):
+            event = {}
+            global_idx_event += 1
+            event['idx_event'] = global_idx_event
+            
+            if counter > 0:
+                event['time_since_last_event'] = row['time'] - period_df['time'].iloc[counter-1]
+            else:
+                event['time_since_last_event'] = row['time'] - start_time
+            
+            same_event_times = period_df[period_df['state'] == row['state']]['time']
+            if same_event_times.iloc[0] != row['time']:
+                event['time_since_last_same_event'] = row['time'] - same_event_times.iloc[same_event_times.index.get_loc(idx)-1]
+            else:
+                event['time_since_last_same_event'] = row['time']  - start_time
+            
+            event['type_event'] = row['state']
+            event['time_since_start'] = row['time']
+            period_events.append(event)
+        
+        periods.append(period_events)
+        start_time += step_size
+
+    data = periods
+    time_durations = []
+    type_seqs = []
+    seq_lens = []
+    for i in range(len(data)):
+        seq_lens.append(len(data[i]))
+        type_seqs.append(torch.LongTensor([int(event['type_event']) for event in data[i]]))
+        time_durations.append(torch.FloatTensor([float(event['time_since_last_event']) for event in data[i]]))
+    
+    return time_durations, type_seqs, seq_lens
