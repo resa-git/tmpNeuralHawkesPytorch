@@ -70,6 +70,7 @@ if __name__ == "__main__":
     parser.add_argument("--batch_size", type=int, default=10, help="Batch_size for each train iteration")
     parser.add_argument("--used_past_model", type=bool, help="True to use a trained model named model.pt")
     parser.add_argument("--in_seq_len", type=int, default= 250, help="Divide the seq into this duration [sec]")
+    parser.add_argument("--overlap", type=int, default= 2, help="time window overlap[sec]")
 
     config = parser.parse_args()
 
@@ -113,7 +114,7 @@ if __name__ == "__main__":
             test_duration, type_test = utils.padding_seq_len(test_duration, type_test, type_size, seq_len)
     elif dataset == 'AMZN' or dataset == 'MSFT' or dataset == 'INTC':
         type_size = 2
-        time_duration, type_train, seq_lens_list = stocks.get_stock_data_overlap(-1, 1e20, dataset, config.in_seq_len, overlap = 5)
+        time_duration, type_train, seq_lens_list = stocks.get_stock_data_overlap(-1, 1e20, dataset, config.in_seq_len, overlap = config.overlap)
         test_duration = time_duration.copy()
         type_test= type_train.copy()
         seq_lens_test= seq_lens_list.copy()
