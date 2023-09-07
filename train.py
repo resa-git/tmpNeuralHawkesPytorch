@@ -114,7 +114,8 @@ if __name__ == "__main__":
             test_duration, type_test = utils.padding_seq_len(test_duration, type_test, type_size, seq_len)
     elif dataset == 'AMZN' or dataset == 'MSFT' or dataset == 'INTC':
         type_size = 2
-        time_duration, type_train, seq_lens_list = stocks.get_stock_data_overlap(-1, 1e20, dataset, config.in_seq_len, overlap = config.overlap)
+        #time_duration, type_train, seq_lens_list = stocks.get_stock_data_overlap(-1, 1e20, dataset, config.in_seq_len, overlap = config.overlap)
+        time_duration, type_train, seq_lens_list = stocks.read_pickle(config)
         test_duration = time_duration.copy()
         type_test= type_train.copy()
         seq_lens_test= seq_lens_list.copy()

@@ -163,4 +163,5 @@ def write_pickle(opt, start_, end_):
 
 def read_pickle(opt):
     with open(f"data/{opt.dataset}.pkl", "rb") as f:
-        (time_durations, type_seqs, seq_lens) = pickle.load(f)
+        (time_durations, type_seqs, seq_lens) = pickle.load(f)  
+    return time_durations, type_seqs, seq_lens
