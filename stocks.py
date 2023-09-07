@@ -3,6 +3,7 @@ import os
 import numpy as np
 import torch
 import pandas as pd
+import pickle
 #start_ = -1
 #end_ = 1e12
 def get_stock_data(start_, end_, stock, seq_length):
@@ -154,3 +155,12 @@ def get_stock_data_overlap(start_, end_, stock, seq_length, overlap=1):
         time_durations.append(torch.FloatTensor([float(event['time_since_last_event']) for event in data[i]]))
     
     return time_durations, type_seqs, seq_lens
+
+def write_pickle(opt, start_, end_):
+    time_durations, type_seqs, seq_lens = get_stock_data_overlap(start_, end_, opt.dataset, opt.in_seq_len, opt.overlap)
+    with open(f"data/{opt.dataset}.pkl", "wb") as f:
+        pickle.dump((time_durations, type_seqs, seq_lens), f)
+
+def read_pickle(opt):
+    with open(f"data/{opt.dataset}.pkl", "rb") as f:
+        (time_durations, type_seqs, seq_lens) = pickle.load(f)
